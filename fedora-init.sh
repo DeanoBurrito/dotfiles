@@ -26,6 +26,7 @@ echo "[Install] Installing display manager and Xorg"
 dnf install -y xorg-x11-server-Xorg lightdm
 cd /home/$SUDO_USER
 cp dotfiles/x/20-touchpad.conf /etc/X11/xorg.conf.d/
+sudo -u $SUDO_USER cp dotfiles/.bashrc .bashrc
 
 read -p "Do you want to use the included .Xresources?" use_default_xres
 if [$use_default_xres = "y"] || [$use_default_xres = "yes"]; then
@@ -62,7 +63,7 @@ nerd-fonts/install.sh FiraMono
 # TODO: lockscreen
 
 echo "[Install] Installing userspace programs nvim"
-dnf -y install vlc alacritty ranger firefox
+dnf -y install vlc alacritty ranger firefox speedcrunch
 # TODO: what other programs do we frequently use?
 
 read -p "Install VScode?" install_vscode
