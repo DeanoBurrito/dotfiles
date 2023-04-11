@@ -19,12 +19,12 @@ dnf install -y yajl-devel libX11-devel libXft-devel libXinerama-devel \
     libXrender-devel freetype-devel
 
 echo "[Install] Creating base directory structure"
+cd /home/$SUDO_USER
 sudo -u $SUDO_USER mkdir documents projects downloads pictures .config
 
 echo "[Install] Cloning dotfiles"
-cd /home/$SUDO_USER
 sudo -u $SUDO_USER git clone https://codeberg.org/r4/dotfiles
-sudo -u $SUDO_USER cp dotfiles/cfg/.alacritty.yml .config/alacritty.yml
+sudo -u $SUDO_USER cp dotfiles/cfg/alacritty.yml .config/alacritty.yml
 
 echo "[Install] Installing display manager and Xorg"
 dnf install -y xorg-x11-server-Xorg sddm picom
@@ -32,6 +32,8 @@ cd /home/$SUDO_USER
 cp dotfiles/x/20-touchpad.conf /etc/X11/xorg.conf.d/
 sudo -u $SUDO_USER cp dotfiles/cfg/.bashrc .bashrc
 sudo -u $SUDO_USER cp dotfiles/cfg/.picom.conf .config/picom.conf
+
+systemctl set-default graphical.target
 
 read -p "Do you want to use the included .Xresources?" use_default_xres
 if [ $use_default_xres = "y" ] || [ $use_default_xres = "yes" ]; then
@@ -69,7 +71,8 @@ sudo -u $SUDO_USER rm -rf dwm-flexipatch
 echo "[Install] Installing FiraCode nerd-font"
 cd /home/$SUDO_USER
 sudo -u $SUDO_USER wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip -O fira-code.zip
-sudo -u $SUDO_USER unzip fira-code-zip -d firacode
+sudo -u $SUDO_USER mkdir -p firacode
+sudo -u $SUDO_USER unzip fira-code.zip -d firacode
 cd firacode
 mkdir -p /usr/local/share/fonts/firacode
 cp Fira* /usr/local/share/fonts/firacode
@@ -86,7 +89,7 @@ echo "[Install] Installing userspace programs nvim"
 dnf -y install vlc alacritty ranger firefox speedcrunch polybar
 # TODO: what other programs do we frequently use?
 
-read -p "Install VScode?" install_vscode
+read -p "Install VScode?" use_vscode
 if [ $use_vscode = "y" ] || [ $use_vscode = "yes" ]; then
     echo "[Install] Installing VScode."
     rpm --import https://packages.microsoft.com/keys/microsoft.asc
