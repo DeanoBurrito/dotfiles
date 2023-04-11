@@ -1,5 +1,14 @@
 font:
   size: 10
+  normal:
+    family: FiraCode NF
+    style: Regular
+  bold:
+    family: FiraCode NF
+    style: Bold
+  italic:
+    family: FiraCode NF
+    style: Italic
 
 schemes:
   iterm: &iterm

@@ -1,17 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 /* Default settings; can be overriden by command line. */
 
-/* I build against the flexipatch versions of dmenu/dwm, so select what patches to use. */
-#define ALPHA_PATCH 1
-#define BORDER_PATCH 1
-#define CASEINSENSITIVE_PATCH 1
-#define CENTER_PATCH 1
-#define FUZZYHIGHLIGHT_PATCH 1
-#define FUZZYMATCH_PATCH 1
-#define GRID_PATCH 1
-#define INCREMENTAL_PATCH 1
-#define NUMBERS_PATCH 1
-
 static int topbar = 1; /* -b  option; if 0, dmenu appears at bottom */
 static int opacity = 1; /* -o  option; if 0, then alpha is disabled */
 static int fuzzy = 1; /* -F  option; if 0, dmenu doesn't use fuzzy matching */

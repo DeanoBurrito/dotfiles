@@ -1,29 +1,5 @@
 /* See LICENSE file for copyright and license details. */
 
-/* I build against dwm-flexipatch, these defines enable certain patches. */
-#define BAR_LTSYMBOL_PATCH 1
-#define BAR_STATUS_PATCH 1
-#define BAR_TAGS_PATCH 1
-#define BAR_WINTITLE_PATCH 1
-#define BAR_ALPHA_PATCH 1
-#define BAR_ANYBAR_PATCH 1
-#define BAR_EWMHTAGS_PATCH 1
-#define BAR_HIDEVACANTTAGS_PATCH 1
-#define BAR_IGNORE_XFT_ERRORS_WHEN_DRAWING_TEXT_PATCH 1
-#define BAR_STATUSALLMONS_PATCH 1
-
-#define ALWAYSCENTER_PATCH 1
-#define COOL_AUTOSTART_PATCH 1
-#define DECORATION_HINTS_PATCH 1
-#define IPC_PATCH 1
-#define NOBORDER_PATCH 1
-#define RESIZEPOINT_PATCH 1
-#define RESTARTSIG_PATCH 1
-#define VANITYGAPS_PATCH 1
-
-#define TILE_LAYOUT 1
-#define MONOCLE_LAYOUT 1
-
 /* appearance */
 static const unsigned int borderpx       = 4;   /* border pixel of windows */
 static const unsigned int snap           = 32;  /* snap pixel */
