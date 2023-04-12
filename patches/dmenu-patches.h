@@ -7,3 +7,4 @@
 #define GRID_PATCH 1
 #define INCREMENTAL_PATCH 1
 #define NUMBERS_PATCH 1
+#define PASSWORD_PATCH 1

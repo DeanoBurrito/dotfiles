@@ -31,7 +31,7 @@ dnf install -y xorg-x11-server-Xorg sddm picom
 cd /home/$SUDO_USER
 cp dotfiles/x/20-touchpad.conf /etc/X11/xorg.conf.d/
 sudo -u $SUDO_USER cp dotfiles/cfg/.bashrc .bashrc
-sudo -u $SUDO_USER cp dotfiles/cfg/.picom.conf .config/picom.conf
+sudo -u $SUDO_USER cp dotfiles/cfg/picom.conf .config/picom.conf
 
 systemctl set-default graphical.target
 
@@ -45,6 +45,9 @@ fi
 
 echo "[Install] Installing desktop stack (dwm/dmenu/slstatus)"
 cd /home/$SUDO_USER
+sudo -u $SUDO_USER mkdir -p .config/dwm
+sudo -u $SUDO_USER cp dotfiles/cfg/dwm-autostart.sh .config/dwm/autostart.sh
+chmod +x .conifg/dwm/autostart.sh
 sudo -u $SUDO_USER git clone https://github.com/bakkeby/dmenu-flexipatch.git
 sudo -u $SUDO_USER cp dotfiles/patches/dmenu-config.h dmenu-flexipatch/config.h
 sudo -u $SUDO_USER cp dotfiles/patches/dmenu-patches.h dmenu-flexipatch/patches.h
@@ -80,14 +83,32 @@ chown -R root: /usr/local/share/fonts/firacode
 chmod 644 /usr/local/share/fonts/firacode/*
 restorecon -vFr /usr/share/fonts/firacode
 cd ..
+fc-cache
 sudo -u $SUDO_USER rm -r firacode fira-code.zip
 
+# TODO: default wallpaper?
 # TODO: slstatus
-# TODO: lockscreen
+# TODO: lockscreen (slock, xsecurelock, xlockmore?)
+
+dnf install ufw
+ufw enable
 
 echo "[Install] Installing userspace programs nvim"
-dnf -y install vlc alacritty ranger firefox speedcrunch polybar
+dnf -y install vlc alacritty ranger firefox speedcrunch polybar rfkill
 # TODO: what other programs do we frequently use?
+# TODO: polybar config
+# TODO: dunst setup
+
+echo "[Install] Installing dmenu scripts"
+cd /home/$SUDO_USER
+sudo -u $SUDO_USER mkdir -p .config/networkmanager-dmenu
+sudo -u $SUDO_USER cp dotfiles/cfg/nm-dmenu-config.ini .config/networkmanager-dmenu/config.ini
+sudo -u $SUDO_USER git clone https://github.com/firecat53/networkmanager-dmenu.git
+cd networkmanager-dmenu
+chmod +x networkmanager_dmenu
+cp networkmanager_dmenu /bin/
+cd /home/$SUDO_USER
+sudo -u $SUDO_USER rm -rf networkmanager-dmenu
 
 read -p "Install VScode?" use_vscode
 if [ $use_vscode = "y" ] || [ $use_vscode = "yes" ]; then
@@ -95,6 +116,11 @@ if [ $use_vscode = "y" ] || [ $use_vscode = "yes" ]; then
     rpm --import https://packages.microsoft.com/keys/microsoft.asc
     sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
     dnf install -y code
+
+    cd /home/$SUDO_USER/dotfiles
+    sudo -u $SUDO_USER mkdir -p ../.config/Code/User
+    sudo -u $SUDO_USER cp cfg/vscode-settings.json ../.config/Code/User/settings.json
+    sudo -u $SUDO_USER cp cfg/vscode-keybindings.json ../.config/Code/User/keybindings.json
 else
     echo "[Install] Skipping VScode install"
 fi

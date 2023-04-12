@@ -11,6 +11,10 @@ static const int smartgaps_fact          = 1;   /* gap factor when there is only
 static const int usealtbar               = 0;        /* 1 means use non-dwm status bar */
 static const char *altbarclass           = "Polybar"; /* Alternate bar class name */
 static const char *altbarcmd             = "$HOME/bar.sh"; /* Alternate bar launch command */
+static const char autostartblocksh[]     = "autostart_blocking.sh";
+static const char autostartsh[]          = "autostart.sh";
+static const char dwmdir[]               = "dwm";
+static const char localshare[]           = ".config";
 static const int showbar                 = 1;   /* 0 means no bar */
 static const int topbar                  = 1;   /* 0 means bottom bar */
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
@@ -91,13 +95,6 @@ static char *colors[][ColCount] = {
 	[SchemeHidNorm]      = { hidnormfgcolor,   hidnormbgcolor,   c000000,              c000000 },
 	[SchemeHidSel]       = { hidselfgcolor,    hidselbgcolor,    c000000,              c000000 },
 	[SchemeUrg]          = { urgfgcolor,       urgbgcolor,       urgbordercolor,       urgfloatcolor },
-};
-
-static const char *const autostart[] = {
-	"slstatus &", NULL,
-	"picom &", NULL,
-	"sh", "-c", "~/.fehbg", NULL,
-	NULL
 };
 
 static char *tagicons[][NUMTAGS] =
