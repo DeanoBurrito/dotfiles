@@ -1,14 +1,28 @@
+window:
+  opacity: 0.8
+  dynamic_title: true
+
 font:
   size: 10
   normal:
-    family: FiraCode NF
+    family: FiraCode NFM
     style: Regular
   bold:
-    family: FiraCode NF
+    family: FiraCode NFM
     style: Bold
   italic:
-    family: FiraCode NF
+    family: FiraCode NFM
     style: Italic
+
+cursor:
+  style:
+    shape: Block
+  unfocused_hollow: true
+
+live_config_reload: true
+
+key_bindings:
+  - { key: Return, mods: Control|Shift, action: SpawnNewInstance }
 
 schemes:
   iterm: &iterm

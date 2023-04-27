@@ -1,0 +1,7 @@
+#!/bin/bash
+pactl set-sink-mute 0 off
+pactl set-sink-volume 0 +5%
+kill -RTMIN+3 $(pidof dwmblocks)
+
+volume=$(amixer sget Master | awk -F "[][]" '/Left:/ { print substr($2, 1, length($2) - 1) }')
+notify-send -t 2500 Volume "Now at $volume%" -h string:x-canonical-private-synchronous:dwm-volume

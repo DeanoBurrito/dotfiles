@@ -1,6 +1,13 @@
 #!/bin/sh
 
-# DNF speed hints
+# A bunch of assumptions are made in this script, and it's really intended for my personal
+# use (these are my personal dotfiles after all). It's expecting to run on
+# a fedora distro (ideally the most minimal server install), with systemd and an 
+# internet connection.
+# This was originally written on fedora 37/38, but it should be forwards compatible.
+
+# DNF speed hints (thank me later ;) )
+
 printf "\nmax_parallel_downloads=10\n" >> /etc/dnf/dnf.conf
 printf "fastestmirror=True\n" >> /etc/dnf/dnf.conf
 
@@ -8,70 +15,57 @@ printf "fastestmirror=True\n" >> /etc/dnf/dnf.conf
 dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
 dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-echo "[Install] Updating system before progressing."
+# Update the system before progressing
 dnf upgrade -y
 
-echo "[Install] Installing core tools."
-dnf install -y make gcc clang git nano wget unzip
+# Install and enable UFW
+dnf install -y ufw
+ufw enable
 
-# TODO: install development libs required for building other tools
+# Install core system tools we'll need throughout the install
+dnf install -y make gcc clang git nano wget unzip findutils bat htop
+
+# Development libraries needed for desktop packages
 dnf install -y yajl-devel libX11-devel libXft-devel libXinerama-devel \
     libXrender-devel freetype-devel
 
-echo "[Install] Creating base directory structure"
+# Clone dotfiles repo, setup home directory and copy user-level config files
 cd /home/$SUDO_USER
-sudo -u $SUDO_USER mkdir documents projects downloads pictures .config
+sudo -u git clone https://codeberg.org/r4/dotfiles
+sudo -u $SUDO_USER mkdir documents projects downloads pictures
+sudo -u $SUDO_USER cp -a ~/dotfiles/home/. .
 
-echo "[Install] Cloning dotfiles"
-sudo -u $SUDO_USER git clone https://codeberg.org/r4/dotfiles
-sudo -u $SUDO_USER cp dotfiles/cfg/alacritty.yml .config/alacritty.yml
+# Copy system-level config files
+cp -a root/. /
 
-echo "[Install] Installing display manager and Xorg"
-dnf install -y xorg-x11-server-Xorg sddm picom
-cd /home/$SUDO_USER
-cp dotfiles/x/20-touchpad.conf /etc/X11/xorg.conf.d/
-sudo -u $SUDO_USER cp dotfiles/cfg/.bashrc .bashrc
-sudo -u $SUDO_USER cp dotfiles/cfg/picom.conf .config/picom.conf
+# Download desktop packages
+dnf install -y xorg-x11-server-Xorg sddm picom dunst
 
-systemctl set-default graphical.target
-
-read -p "Do you want to use the included .Xresources?" use_default_xres
-if [ $use_default_xres = "y" ] || [ $use_default_xres = "yes" ]; then
-    echo "[Install] Copying .Xresources."
-    sudo -u $SUDO_USER cp dotfiles/cfg/.Xresources .Xresources
-else
-    echo "[Install] Not copying .Xresources."
-fi
-
-echo "[Install] Installing desktop stack (dwm/dmenu/slstatus)"
-cd /home/$SUDO_USER
-sudo -u $SUDO_USER mkdir -p .config/dwm
-sudo -u $SUDO_USER cp dotfiles/cfg/dwm-autostart.sh .config/dwm/autostart.sh
-chmod +x .conifg/dwm/autostart.sh
-sudo -u $SUDO_USER git clone https://github.com/bakkeby/dmenu-flexipatch.git
-sudo -u $SUDO_USER cp dotfiles/patches/dmenu-config.h dmenu-flexipatch/config.h
-sudo -u $SUDO_USER cp dotfiles/patches/dmenu-patches.h dmenu-flexipatch/patches.h
+# Build remaining desktop packages (dwm, dmenu, dwmblocks-async)
+sudo -u $SUDO_USER mkdir desktop-stack
+cd desktop-stack
+git clone https://github.com/bakkeby/dmenu-flexipatch.git
 cd dmenu-flexipatch
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dmenu-patches.h patches.h
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dmenu-config.h config.h
 sudo -u $SUDO_USER make clean
 sudo -u $SUDO_USER make all
 make install
 cd ..
-sudo -u $SUDO_USER rm -rf dmenu-flexipatch
 
-cd /home/$SUDO_USER
-sudo -u $SUDO_USER git clone https://github.com/bakkeby/dwm-flexipatch.git
-sudo -u $SUDO_USER cp dotfiles/patches/dwm-config.h dwm-flexipatch/config.h
-sudo -u $SUDO_USER cp dotfiles/patches/dwm-patches.h dwm-flexipatch/patches.h
+git clone https://github.com/bakkeby/dwm-flexipatch.git
 cd dwm-flexipatch
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dwm-patches.h patches.h
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dwm-config.h config.h
 sudo -u $SUDO_USER echo "YAJLLIBS = -lyajl" >> config.mk
 sudo -u $SUDO_USER echo "YAJLINC = -I/usr/include/yajl" >> config.mk
 sudo -u $SUDO_USER make clean
 sudo -u $SUDO_USER make all
 make install
-cd ..
-sudo -u $SUDO_USER rm -rf dwm-flexipatch
 
-echo "[Install] Installing FiraCode nerd-font"
+# TODO: dwmblocks-async
+
+# Install custom fonts (just fira code nerd font for now)
 cd /home/$SUDO_USER
 sudo -u $SUDO_USER wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip -O fira-code.zip
 sudo -u $SUDO_USER mkdir -p firacode
@@ -86,50 +80,18 @@ cd ..
 fc-cache
 sudo -u $SUDO_USER rm -r firacode fira-code.zip
 
-# TODO: default wallpaper?
-# TODO: slstatus
-# TODO: lockscreen (slock, xsecurelock, xlockmore?)
+# Make sure we boot into the display manager
+systemctl set-default graphical.target
 
-dnf install ufw
-ufw enable
+# Install userspace tools
+dnf install -y alacritty kitty ImageMagick ranger python python3-pillow
+dnf install -y speedcrunch vlc firefox flameshot
 
-echo "[Install] Installing userspace programs nvim"
-dnf -y install vlc alacritty ranger firefox speedcrunch polybar rfkill
-# TODO: what other programs do we frequently use?
-# TODO: polybar config
-# TODO: dunst setup
+# Install vscode
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+dnf install -y code
+cd /home/$SUDO_USER/dotfiles
+cat stash/vscode-extensions | sudo -u $SUDO_USER xargs -n 1 code --install-extensions
 
-echo "[Install] Installing dmenu scripts"
-cd /home/$SUDO_USER
-sudo -u $SUDO_USER mkdir -p .config/networkmanager-dmenu
-sudo -u $SUDO_USER cp dotfiles/cfg/nm-dmenu-config.ini .config/networkmanager-dmenu/config.ini
-sudo -u $SUDO_USER git clone https://github.com/firecat53/networkmanager-dmenu.git
-cd networkmanager-dmenu
-chmod +x networkmanager_dmenu
-cp networkmanager_dmenu /bin/
-cd /home/$SUDO_USER
-sudo -u $SUDO_USER rm -rf networkmanager-dmenu
-
-read -p "Install VScode?" use_vscode
-if [ $use_vscode = "y" ] || [ $use_vscode = "yes" ]; then
-    echo "[Install] Installing VScode."
-    rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-    dnf install -y code
-
-    cd /home/$SUDO_USER/dotfiles
-    sudo -u $SUDO_USER mkdir -p ../.config/Code/User
-    sudo -u $SUDO_USER cp cfg/vscode-settings.json ../.config/Code/User/settings.json
-    sudo -u $SUDO_USER cp cfg/vscode-keybindings.json ../.config/Code/User/keybindings.json
-else
-    echo "[Install] Skipping VScode install"
-fi
-
-read -p "Build cross compiler toolchains?" gen_osdev_tools
-if [ $gen_osdev_tools = "y" ] || [ $gen_osdev_tools = "yes "]; then
-    echo "[Install] Building cross-compiler toolchain"
-    cd /home/$SUDO_USER
-    # TODO: toolchain gen
-else
-    echo "[Install] Not building cross-compiler tools."
-fi
+# TODO: osdev toolchain gen

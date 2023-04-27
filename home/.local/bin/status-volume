@@ -1,0 +1,20 @@
+#!/bin/sh
+volume=$(amixer sget Master | awk -F "[][]" '/Left:/ { print substr($2, 1, length($2) - 1) }')
+enabled=$(amixer sget Master | awk -F "[][]" '/Left:/ { print $4 }')
+
+if [ $volume -gt 50 ]; then
+    icon=" "
+elif [ $volume -gt 25 ]; then
+    icon=" "
+else
+    icon=" "
+fi
+
+if [ $enabled = "on" ]; then
+    output=$volume"%"
+else
+    output="muted"
+    icon=" "
+fi
+
+printf "%s%s" "$icon" "$output"

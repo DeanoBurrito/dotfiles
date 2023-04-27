@@ -1,3 +1,3 @@
 killall picom; picom & disown
-killall slstatus; slstatus & disown
+killall dwmblocks; dwmblocks & disown
 ~/.fehbg

@@ -1,0 +1,5 @@
+[user]
+	name = Dean
+	email = dean243@hotmail.com
+[credential]
+	helper = store

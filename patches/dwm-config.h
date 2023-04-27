@@ -1,4 +1,7 @@
+
 /* See LICENSE file for copyright and license details. */
+
+#include <X11/XF86keysym.h>
 
 /* appearance */
 static const unsigned int borderpx       = 4;   /* border pixel of windows */
@@ -8,9 +11,9 @@ static const unsigned int gappiv         = 10;  /* vert inner gap between window
 static const unsigned int gappoh         = 10;  /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov         = 10;  /* vert outer gap between windows and screen edge */
 static const int smartgaps_fact          = 1;   /* gap factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
-static const int usealtbar               = 0;        /* 1 means use non-dwm status bar */
+static const int usealtbar               = 0;   /* 1 means use non-dwm status bar */
 static const char *altbarclass           = "Polybar"; /* Alternate bar class name */
-static const char *altbarcmd             = "$HOME/bar.sh"; /* Alternate bar launch command */
+static const char *altbarcmd             = "killall polybar; polybar bigbar &"; /* Alternate bar launch command */
 static const char autostartblocksh[]     = "autostart_blocking.sh";
 static const char autostartsh[]          = "autostart.sh";
 static const char dwmdir[]               = "dwm";
@@ -141,6 +144,7 @@ static const BarRule barrules[] = {
 	{ -1,        0,     BAR_ALIGN_LEFT,   width_ltsymbol,           draw_ltsymbol,          click_ltsymbol,          NULL,                    "layout" },
 	{ statusmon, 0,     BAR_ALIGN_RIGHT,  width_status,             draw_status,            click_status,            NULL,                    "status" },
 	{ -1,        0,     BAR_ALIGN_NONE,   width_wintitle,           draw_wintitle,          click_wintitle,          NULL,                    "wintitle" },
+	{ statusmon, 0,     BAR_ALIGN_RIGHT,  width_status,             draw_status,		click_status,		 NULL,			  "status" },
 };
 
 /* layout(s) */
@@ -180,15 +184,30 @@ static const char *dmenucmd[] = {
 	"-sf", selfgcolor,
 	NULL
 };
-static const char *termcmd[]  = { "alacritty", NULL };
+
+static const StatusCmd statuscmds[] = {
+	{ "notify-send Volume$BUTTON", 1 },
+	{ "notify-send CPU$BUTTON", 2 },
+	{ "notify-send Battery$BUTTON", 3 },
+};
+
+static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
+
+static const char *termcmd[]  = { "kitty", NULL };
+static const char *volumeup[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
+static const char *volumedown[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
+static const char *volumemute[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
+static const char *backlightup[] = { "light", "-A", "5", NULL };
+static const char *backlightdown[] = { "light", "-U", "5", NULL };
+static const char *flameshot[] = { "flameshot", "gui", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
 	{ MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
 	{ MODKEY,                       XK_b,          togglebar,              {0} },
-	{ MODKEY,                       XK_j,          focusstack,             {.i = +1 } },
-	{ MODKEY,                       XK_k,          focusstack,             {.i = -1 } },
+	{ MODKEY,                       XK_j,          focusstack,             {.i = -1 } },
+	{ MODKEY,                       XK_k,          focusstack,             {.i = +1 } },
 	{ MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
 	{ MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} },
@@ -238,6 +257,12 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                                  6)
 	TAGKEYS(                        XK_8,                                  7)
 	TAGKEYS(                        XK_9,                                  8)
+	{ 0,                       		XF86XK_AudioLowerVolume, spawn, 		{.v = volumedown } },
+	{ 0,                       		XF86XK_AudioMute, 		 spawn, 		{.v = volumemute } },
+	{ 0,                       		XF86XK_AudioRaiseVolume, spawn, 		{.v = volumeup   } },
+	{ 0,							XF86XK_MonBrightnessUp,  spawn, 		{.v = backlightup } },
+	{ 0,							XF86XK_MonBrightnessDown,spawn, 		{.v = backlightdown } },
+	{ MODKEY|ShiftMask,				XK_s,			spawn,				{.v = flameshot }}
 };
 
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
@@ -246,7 +271,6 @@ static const Button buttons[] = {
 	{ ClkLtSymbol,          0,                   Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,                   Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,                   Button2,        zoom,           {0} },
-	{ ClkStatusText,        0,                   Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,              Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,              Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,              Button3,        resizemouse,    {0} },
@@ -254,6 +278,9 @@ static const Button buttons[] = {
 	{ ClkTagBar,            0,                   Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,              Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,              Button3,        toggletag,      {0} },
+	{ ClkStatusText,	0,		     Button1,	     spawn,	     {.v = statuscmd} },
+	{ ClkStatusText,	0,		     Button2,	     spawn,	     {.v = statuscmd} },
+	{ ClkStatusText,	0,		     Button3,        spawn,          {.v = statuscmd} },
 };
 
 static const char *ipcsockpath = "/tmp/dwm.sock";
