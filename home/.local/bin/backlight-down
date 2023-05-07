@@ -2,5 +2,6 @@
 light -U 5
 kill -RTMIN+4 $(pidof dwmblocks)
 
-level=$(light | cut -d . -f 1)
-notify-send -t 2500 "Backlight" "Now at $level%" -h string:x-canonical-private-synchronous:backlight
+exec_dir=$(dirname "$0")
+. "$exec_dir/notify-helpers"
+notify_backlight

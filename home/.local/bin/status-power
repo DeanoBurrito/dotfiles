@@ -3,19 +3,40 @@
 for battery in /sys/class/power_supply/BAT?*; do
 	[ -n "${capacity+x}" ] && printf " "
 
-	case "$(cat "$battery/status" 2>&1)" in
-		"Full") status="⚡" ;;
-		"Discharging") status="🔋" ;;
-		"Charging") status="🔌" ;;
-		"Not charging") status="🛑" ;;
-		"Unknown") status="♻️" ;;
-	esac
 	capacity="$(cat "$battery/capacity" 2>&1)"
-	if [ "$status" = "🔋" ] && [ "$capacity" -le 10 ]; then
-		warninghead="^v^^c#D04030^"
-		warningtail="!^t^"
-		notify-send -t 5000 "Battery Low" "Battery $battery has less than 10% remaining, charge now." -h string:x-canonical-private-synchronous:low-battery
+	cap_level="$(expr $capacity / 10)"
+	case $cap_level in
+		"10") icon="󰁹" ;;
+		"9") icon="󰂂" ;;
+		"8") icon="󰂁" ;;
+		"7") icon="󰂀" ;;
+		"6") icon="󰁿" ;;
+		"5") icon="󰁾" ;;
+		"4") icon="󰁽" ;;
+		"3") icon="󰁼" ;;
+		"2") icon="󰁻" ;;
+		"1") icon="󰁺" ;;
+		"0") icon="󰂎" ;;
+	esac
+
+	case "$(cat "$battery/status" 2>&1)" in
+		"Full")	colour="#30B512" ;;
+		"Discharging")
+			colour="#bbbbbb"
+			discharging="yes"
+			;;
+		"Charging")
+			colour="#bbbbbb"
+			charge_icon="󱐋"
+			;;
+		"Not charging") colour="#eac02a" ;;
+		"Unknown") colour="#ff0000" ;;
+	esac
+
+	if [ "$discharging" = "yes" ] && [ "$capacity" -le 12 ]; then
+		color="#EA591A"
+		notify-send -t 3000 "Power Critical" "Battery power is at < 12%, you might want to plug in." -h string:x-canonical-private-synchronous:power-critical
 	fi
 
-	printf "%s%s %i%%%s" "$warninghead" "$status" "$capacity" "$warningtail"; unset warning
+	printf "^v^^c%s^%s%s%3i%%^t^" "$colour" "$charge_icon" "$icon" "$capacity"
 done

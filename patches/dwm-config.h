@@ -4,7 +4,7 @@
 #include <X11/XF86keysym.h>
 
 /* appearance */
-static const unsigned int borderpx       = 4;   /* border pixel of windows */
+static const unsigned int borderpx       = 2;   /* border pixel of windows */
 static const unsigned int snap           = 32;  /* snap pixel */
 static const unsigned int gappih         = 10;  /* horiz inner gap between windows */
 static const unsigned int gappiv         = 10;  /* vert inner gap between windows */
@@ -27,7 +27,7 @@ static const int statusmon               = -1;
 static int tagindicatortype              = INDICATOR_BOTTOM_BAR;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_BOTTOM_BAR;
-static const char *fonts[]               = { "monospace:size=10" };
+static const char *fonts[]               = { "Symbols Nerd Font Mono:size=10", "monospace:size=10" };
 static const char dmenufont[]            = "monospace:size=10";
 
 static char c000000[]                    = "#000000"; // placeholder value
@@ -48,9 +48,9 @@ static char titlenormbordercolor[]       = "#444444";
 static char titlenormfloatcolor[]        = "#db8fd9";
 
 static char titleselfgcolor[]            = "#eeeeee";
-static char titleselbgcolor[]            = "#005577";
-static char titleselbordercolor[]        = "#005577";
-static char titleselfloatcolor[]         = "#005577";
+static char titleselbgcolor[]            = "#111111";
+static char titleselbordercolor[]        = "#111111";
+static char titleselfloatcolor[]         = "#111111";
 
 static char tagsnormfgcolor[]            = "#bbbbbb";
 static char tagsnormbgcolor[]            = "#222222";
@@ -142,9 +142,8 @@ static const BarRule barrules[] = {
 	/* monitor   bar    alignment         widthfunc                 drawfunc                clickfunc                hoverfunc                name */
 	{ -1,        0,     BAR_ALIGN_LEFT,   width_tags,               draw_tags,              click_tags,              hover_tags,              "tags" },
 	{ -1,        0,     BAR_ALIGN_LEFT,   width_ltsymbol,           draw_ltsymbol,          click_ltsymbol,          NULL,                    "layout" },
-	{ statusmon, 0,     BAR_ALIGN_RIGHT,  width_status,             draw_status,            click_status,            NULL,                    "status" },
+	{ -1, 		 0,     BAR_ALIGN_RIGHT,  width_status2d,           draw_status2d,          click_status2d,          NULL,                    "status2d" },
 	{ -1,        0,     BAR_ALIGN_NONE,   width_wintitle,           draw_wintitle,          click_wintitle,          NULL,                    "wintitle" },
-	{ statusmon, 0,     BAR_ALIGN_RIGHT,  width_status,             draw_status,		click_status,		 NULL,			  "status" },
 };
 
 /* layout(s) */
@@ -185,20 +184,12 @@ static const char *dmenucmd[] = {
 	NULL
 };
 
-static const StatusCmd statuscmds[] = {
-	{ "notify-send Volume$BUTTON", 1 },
-	{ "notify-send CPU$BUTTON", 2 },
-	{ "notify-send Battery$BUTTON", 3 },
-};
-
-static const char *statuscmd[] = { "/bin/sh", "-c", NULL, NULL };
-
 static const char *termcmd[]  = { "kitty", NULL };
-static const char *volumeup[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
-static const char *volumedown[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
-static const char *volumemute[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
-static const char *backlightup[] = { "light", "-A", "5", NULL };
-static const char *backlightdown[] = { "light", "-U", "5", NULL };
+static const char *volumeup[]   = { "volume-up", NULL };
+static const char *volumedown[] = { "volume-down", NULL };
+static const char *volumemute[] = { "volume-mute", NULL };
+static const char *backlightup[] = { "backlight-up", NULL };
+static const char *backlightdown[] = { "backlight-down", NULL };
 static const char *flameshot[] = { "flameshot", "gui", NULL };
 
 static const Key keys[] = {
@@ -278,9 +269,6 @@ static const Button buttons[] = {
 	{ ClkTagBar,            0,                   Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,              Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,              Button3,        toggletag,      {0} },
-	{ ClkStatusText,	0,		     Button1,	     spawn,	     {.v = statuscmd} },
-	{ ClkStatusText,	0,		     Button2,	     spawn,	     {.v = statuscmd} },
-	{ ClkStatusText,	0,		     Button3,        spawn,          {.v = statuscmd} },
 };
 
 static const char *ipcsockpath = "/tmp/dwm.sock";

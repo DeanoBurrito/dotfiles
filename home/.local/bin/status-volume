@@ -13,8 +13,8 @@ fi
 if [ $enabled = "on" ]; then
     output=$volume"%"
 else
-    output="muted"
+    output="mute"
     icon=" "
 fi
 
-printf "%s%s" "$icon" "$output"
+printf "%s%3s" "$icon" "$output"

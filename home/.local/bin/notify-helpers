@@ -1,0 +1,19 @@
+#!/bin/bash
+
+notify_volume()
+{
+	local volume=$(amixer sget Master | awk -F "[][]" '/Left:/ { print substr($2, 1, length($2) - 1) }')
+	local hints="-h int:value:$volume -h string:x-canonical-private-synchronous:dwm-volume"
+
+	if [ $(amixer sget Master | awk -F "[][]" '/Left:/ { print $4 }') = "on" ]; then
+		notify-send -t 2500 "Volume: $volume%" $hints
+	else
+		notify-send -t 2500 "Volume: muted" $hints
+	fi
+}
+
+notify_backlight()
+{
+	local level=$(light | cut -d . -f 1)
+	notify-send -t 2500 "Backlight: $level%" -h int:value:$level -h string:x-canonical-private-synchronous:backlight
+}

@@ -1,10 +1,53 @@
 #!/bin/sh
 
-if grep -xq 'up' /sys/class/net/w*/operstate 2>/dev/null ; then
-	wifiicon="$(awk '/^\s*w/ { print "📶", int($3 * 100 / 70) "% " }' /proc/net/wireless)"
-elif grep -xq 'down' /sys/class/net/w*/operstate 2>/dev/null ; then
-	grep -xq '0x1003' /sys/class/net/w*/flags && wifiicon="📡 " || wifiicon="❌ "
+for tun in /sys/class/net/tun?*; do
+	if [ ! -d "$tun" ]; then
+		continue;
+	fi
+	if [ "$(cat $tun/operstate)" != "up" ]; then
+		continue;
+	fi
+	found_any="yes"
+
+	printf ""
+done
+
+for eth in /sys/class/net/e?*; do
+	if [ ! -d "$eth" ]; then
+		continue;
+	fi
+	if [ "$(cat $eth/operstate)" != "up" ]; then
+		continue;
+	fi
+	found_any="yes"
+
+	printf "󰈀"
+done
+
+for wifi in /sys/class/net/w?*; do
+	if [ ! -d "$wifi" ]; then
+		continue;
+	fi
+	if [ "$(cat $wifi/operstate)" != "up" ]; then
+		continue
+	fi
+	found_any="yes"
+
+	strength="$(awk '/^\s*w/ { print int($3 * 100 / 70) }' /proc/net/wireless)"
+	str_level="$(expr $strength / 20)"
+	case $str_level in
+		"4") icon="󰤨" ;;
+		"3") icon="󰤥" ;;
+		"2") icon="󰤢" ;;
+		"1") icon="󰤟" ;;
+		"0") icon="󰤯" ;;
+	esac
+
+	name=$(nmcli -t -f NAME con show --active)
+
+	printf "%s %2s%% %s" "$icon" "$strength" "$name"
+done
+
+if [ "$found_any" != "yes" ]; then
+	printf "󰌙 offline"
 fi
-
-printf "%s%s%s" "$wifiicon" "$(sed "s/down/❎/;s/up/🌐/" /sys/class/net/e*/operstate 2>/dev/null)" "$(sed "s/.*/🔒/" /sys/class/net/tun*/operstate 2>/dev/null)"
-

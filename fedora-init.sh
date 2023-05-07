@@ -20,6 +20,8 @@ dnf upgrade -y
 
 # Install and enable UFW
 dnf install -y ufw
+ufw limit 22/tcp
+ufw default deny incoming
 ufw enable
 
 # Install core system tools we'll need throughout the install
@@ -75,7 +77,7 @@ mkdir -p /usr/local/share/fonts/firacode
 cp Fira* /usr/local/share/fonts/firacode
 chown -R root: /usr/local/share/fonts/firacode
 chmod 644 /usr/local/share/fonts/firacode/*
-restorecon -vFr /usr/share/fonts/firacode
+restorecon -vFr /usr/local/share/fonts/firacode
 cd ..
 fc-cache
 sudo -u $SUDO_USER rm -r firacode fira-code.zip
