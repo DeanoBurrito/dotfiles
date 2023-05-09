@@ -1,0 +1,8 @@
+require("core.pluginconfig.nvim-tree")
+require("core.pluginconfig.telescope")
+require("core.pluginconfig.treesitter")
+require("core.pluginconfig.lsp")
+require("core.pluginconfig.cmp")
+require("core.pluginconfig.gitsigns")
+require("core.pluginconfig.barbar")
+require("core.pluginconfig.lualine")

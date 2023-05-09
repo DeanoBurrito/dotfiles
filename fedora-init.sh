@@ -2,7 +2,7 @@
 
 # A bunch of assumptions are made in this script, and it's really intended for my personal
 # use (these are my personal dotfiles after all). It's expecting to run on
-# a fedora distro (ideally the most minimal server install), with systemd and an 
+# a fedora distro (ideally the most minimal server install), with systemd and an
 # internet connection.
 # This was originally written on fedora 37/38, but it should be forwards compatible.
 
@@ -18,6 +18,9 @@ dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-
 # Update the system before progressing
 dnf upgrade -y
 
+# Setup automatic updates (download only, then notify)
+# TODO: implement this!:
+
 # Install and enable UFW
 dnf install -y ufw
 ufw limit 22/tcp
@@ -25,7 +28,7 @@ ufw default deny incoming
 ufw enable
 
 # Install core system tools we'll need throughout the install
-dnf install -y make gcc clang git nano wget unzip findutils bat htop
+dnf install -y make gcc clang rip-grep git nano neovim wget unzip findutils bat htop
 
 # Development libraries needed for desktop packages
 dnf install -y yajl-devel libX11-devel libXft-devel libXinerama-devel \
@@ -64,8 +67,16 @@ sudo -u $SUDO_USER echo "YAJLINC = -I/usr/include/yajl" >> config.mk
 sudo -u $SUDO_USER make clean
 sudo -u $SUDO_USER make all
 make install
+cd ..
 
-# TODO: dwmblocks-async
+git clone https://github.com/UtkarshVerma/dwmblocks-async.git
+cd dwmblocks-async
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dwmblocks-async-config.h config.h
+sudo -u $SUDO_USER cp ../../dotfiles/patches/dwmblocks-async-config.c config.c
+sudo -u $SUDO_USER make clean
+sudo -u $SUDO_USER make all
+make install
+cd ..
 
 # Install custom fonts (just fira code nerd font for now)
 cd /home/$SUDO_USER
