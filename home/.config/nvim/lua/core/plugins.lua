@@ -19,10 +19,11 @@ return require('packer').startup(function(use)
     use 'nvim-tree/nvim-tree.lua'
     use 'nvim-tree/nvim-web-devicons'
     use 'nvim-treesitter/nvim-treesitter'
+
     use {
         'nvim-telescope/telescope.nvim',
         tag = '0.1.0',
-        requires = { {'nvim-lua/plenary.nvim'} },
+	requires = { {'nvim-lua/plenary.nvim'} },
     }
     use {
         'williamboman/mason.nvim',
@@ -35,12 +36,13 @@ return require('packer').startup(function(use)
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-path',
         'hrsh7th/nvim-cmp',
-        'L3MON4D3/LuaSnip'
+        'L3MON4D3/LuaSnip',
     }
     use 'lewis6991/gitsigns.nvim'
     use 'romgrk/barbar.nvim'
     use 'shatur/neovim-ayu'
     use 'nvim-lualine/lualine.nvim'
+    use 'folke/trouble.nvim'
 
     -- Put this at the end after all plugins
     if packer_bootstrap then

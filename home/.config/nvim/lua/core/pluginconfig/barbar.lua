@@ -9,8 +9,12 @@ require('barbar').setup {
     },
     filetype = { enabled = true }
 }
+local map = vim.api.nvim_set_keymap
+local opts = { noremap = true, silent = true }
 
-vim.keymap.set('n', '<A-,>', '<Cmd>BufferPrevious<CR>', {})
-vim.keymap.set('n', '<A-.>', '<Cmd>BufferNext<CR>', {})
-vim.keymap.set('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', {})
-vim.keymap.set('n', '<A->>', '<Cmd>BufferMoveNext<CR>', {})
+vim.keymap.set('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+vim.keymap.set('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+vim.keymap.set('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+vim.keymap.set('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+vim.keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
+vim.keymap.set('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)

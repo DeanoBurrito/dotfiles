@@ -13,9 +13,18 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
 end
 
-require('lspconfig').lua_ls.setup {
-    on_attach = on_attach }
-require('lspconfig').clangd.setup {
-    on_attach = on_attach }
-require('lspconfig').ltex.setup {
-    on_attach = on_attach }
+local caps = require('cmp_nvim_lsp').default_capabilities()
+
+require('lspconfig').lua_ls.setup ({
+    on_attach = on_attach,
+    capabilities = caps
+})
+require('lspconfig').clangd.setup ({
+    on_attach = on_attach,
+    capabilities = caps,
+    cmd = { "clangd", "--header-insertion=never" }
+})
+require('lspconfig').ltex.setup ({
+    on_attach = on_attach,
+    capabilities = caps
+})

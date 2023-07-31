@@ -35,5 +35,12 @@ PS1="\[\e]0;$\u@\h: \w\a\]$PS1"
 # Fedora doesn't provide gdb-multiarch, so add our own to path (and other cx tools)
 PATH="$HOME/Documents/cross-tools/bin:$PATH"
 
+# Configuration for xsecurelock
+export XSECURELOCK_BACKGROUND_COLOR=#111111
+export XSECURELOCK_AUTH_BACKGROUND_COLOR=#222222
+export XSECURELOCK_AUTH_FOREGROUND_COLOR=#dddddd
+export XSECURELOCK_COMPOSITE_OBSCURER=0
+
+# Use bat to pretty paginated output
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export MANROFFOPT="-c"

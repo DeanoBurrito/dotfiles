@@ -37,14 +37,17 @@ dnf install -y yajl-devel libX11-devel libXft-devel libXinerama-devel \
 # Clone dotfiles repo, setup home directory and copy user-level config files
 cd /home/$SUDO_USER
 sudo -u git clone https://codeberg.org/r4/dotfiles
-sudo -u $SUDO_USER mkdir documents projects downloads pictures
-sudo -u $SUDO_USER cp -a ~/dotfiles/home/. .
+sudo -u $SUDO_USER mkdir documents projects downloads pics
 
-# Copy system-level config files
-cp -a root/. /
 
 # Download desktop packages
-dnf install -y xorg-x11-server-Xorg sddm picom dunst
+dnf install -y xorg-x11-server-Xorg sddm picom dunst xsecurelock feh
+
+# Configure xsecurelock (at a global level)
+echo "XSECURELOCK_BACKGROUND_COLOR=#111111" >> /etc/environment
+echo "XSECURELOCK_AUTH_BACKGROUND_COLOR=#222222" >> /etc/environment
+echo "XSECURELOCK_AUTH_FOREGROUND_COLOR=#dddddd" >> /etc/environment
+echo "XSECURELOCK_COMPOSITE_OBSCURER=0" >> /etc/environment
 
 # Build remaining desktop packages (dwm, dmenu, dwmblocks-async)
 sudo -u $SUDO_USER mkdir desktop-stack
@@ -67,6 +70,7 @@ sudo -u $SUDO_USER echo "YAJLINC = -I/usr/include/yajl" >> config.mk
 sudo -u $SUDO_USER make clean
 sudo -u $SUDO_USER make all
 make install
+
 cd ..
 
 git clone https://github.com/UtkarshVerma/dwmblocks-async.git
@@ -95,10 +99,12 @@ sudo -u $SUDO_USER rm -r firacode fira-code.zip
 
 # Make sure we boot into the display manager
 systemctl set-default graphical.target
+# Enable locking screen on sleep
+systemctl enable xlock.service
 
 # Install userspace tools
-dnf install -y alacritty kitty ImageMagick ranger python python3-pillow
-dnf install -y speedcrunch vlc firefox flameshot
+dnf install -y kitty ImageMagick ranger python python3-pillow
+dnf install -y speedcrunch vlc firefox flameshot btop
 
 # Install vscode
 rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -107,4 +113,6 @@ dnf install -y code
 cd /home/$SUDO_USER/dotfiles
 cat stash/vscode-extensions | sudo -u $SUDO_USER xargs -n 1 code --install-extensions
 
-# TODO: osdev toolchain gen
+# Copy root and user config files, now that everything is installed.
+cp -a root/. /
+sudo -u $SUDO_USER cp -a ~/dotfiles/home/. .

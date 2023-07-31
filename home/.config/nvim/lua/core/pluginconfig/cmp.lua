@@ -32,14 +32,25 @@ cmp.setup({
         end, { 'i', 's' }),
     }),
     sources = {
-        { name = 'path' },
         { name = 'nvim_lsp', keyword_length = 1 },
         { name = 'buffer', keyword_length = 3 },
         { name = 'luasnip', keyword_length = 2 },
+        { name = 'path' },
     },
     window = {
         documentation = cmp.config.window.bordered(),
         completion = cmp.config.window.bordered()
+    },
+    formatting = {
+        format = function(entry, vim_item)
+            vim_item.menu = ({
+                buffer = "[Buff]",
+                nvim_lsp = "[LSP]",
+                luasnip = "[Snip]",
+                path = "[Path]",
+            })[entry.source.name]
+            return vim_item
+        end
     },
 })
 
@@ -59,13 +70,3 @@ cmp.setup.cmdline(':', {
     })
 })
 
-local caps = require('cmp_nvim_lsp').default_capabilities()
-require('lspconfig').clangd.setup {
-    capabilities = caps
-}
-require('lspconfig').lua_ls.setup {
-    capabilities = caps
-}
-require('lspconfig').ltex.setup {
-    capabilities = caps
-}
