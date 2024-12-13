@@ -1,0 +1,132 @@
+@keyframes blink-warning {
+    70% {
+        color: white;
+    }
+
+    to {
+        color: white;
+        background-color: orange;
+    }
+}
+
+@keyframes blink-critical {
+    70% {
+        color: white;
+    }
+
+    to {
+        color: white;
+        background-color: red;
+    }
+}
+
+* {
+    border: none;
+    border-radius: 0px;
+    font-family: "FiraMono Nerd Font";
+    font-size: 12px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(21, 18, 27, 0);
+    color: white;
+}
+
+tooltip {
+    background: #1e1e2e;
+    border-radius: 2px;
+    border-width: 1.5px;
+    border-style: solid;
+    border-color: #11111b;
+    transition: 0.3s;
+}
+
+#workspaces {
+    background: #1e1e2d;
+    margin-left: 5px;
+    padding-right: 0px;
+    padding-left: 5px;
+}
+
+#workspaces button {
+    padding: 5px;
+    color: #a6adc8;
+    margin-right: 5px;
+}
+
+#workspaces button.active {
+    color: #a6adc8;
+}
+
+#workspaces button.focused {
+    color: #a6adc8;
+    background: #eba0ac;
+}
+
+#workspaces button.urgent {
+    color: #11111b;
+    background: #6ae3a1;
+}
+
+#workspaces button:hover {
+    background: #11111b;
+    color: #cdd6f4;
+}
+
+#cpu,
+#memory,
+#wireplumber,
+#network,
+#bluetooth,
+#backlight,
+#battery,
+#clock {
+    background: #1e1e2e;
+    opacity: 0.8;
+    padding: 0px 10px;
+    margin: 0;
+    margin-top: 5px;
+    border: 1px solid #181825;
+}
+
+#cpu,
+#battery {
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#cpu.moderate {
+    color: orange;
+    animation-name: blink-warning;
+    animation-duration: 2s;
+}
+
+#cpu.high {
+    color: red;
+    animation-name: blink-critical;
+    animation-duration: 2s;
+}
+
+#battery.warning {
+    color: orange;
+}
+
+#battery.warning.discharging {
+    animation-name: blink-warning;
+    animation-duration: 2s;
+}
+
+#battery.critical {
+    color: red;
+}
+
+#battery.critical.discharging {
+    animation-name: blink-critical;
+    animation-duration: 1.2s;
+}
+
+#clock {
+    font-weight: bold;
+}

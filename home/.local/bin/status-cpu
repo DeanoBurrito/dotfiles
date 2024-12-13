@@ -1,5 +1,0 @@
-#!/bin/sh
-temp=$(sensors | awk '/Core 0/ {print $3}')
-freq=$(cpupower frequency-info | awk '/current CPU frequency/ { print $4 $5 }' | tail -n 1)
-
-printf "%s %s" "$temp" "$freq"

@@ -1,0 +1,21 @@
+[credential]
+	helper = store
+[user]
+	name = dean
+	email = dean243@hotmail.com
+[color]
+	ui = auto
+[advice]
+	statusHints = off
+[core]
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[push]
+    autoSetupRemote = true
+[merge]
+    conflictStyle = zdiff3
+[delta]
+    navigate = true
+    dark = true
+    line-numbers = true

@@ -1,7 +1,0 @@
-#!/bin/sh
-light -U 5
-kill -RTMIN+4 $(pidof dwmblocks)
-
-exec_dir=$(dirname "$0")
-. "$exec_dir/notify-helpers"
-notify_backlight

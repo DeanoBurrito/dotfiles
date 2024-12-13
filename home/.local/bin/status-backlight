@@ -1,5 +1,0 @@
-#!/bin/sh
-
-icon="󰖨"
-level=$(light | cut -d . -f 1)
-printf "%s%3s%%" "$icon" "$level"

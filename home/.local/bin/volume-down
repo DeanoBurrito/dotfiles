@@ -1,8 +1,0 @@
-#!/bin/sh
-pactl set-sink-mute 0 off
-pactl set-sink-volume 0 -5%
-kill -RTMIN+3 $(pidof dwmblocks)
-
-exec_dir=$(dirname "$0")
-. "$exec_dir/notify-helpers"
-notify_volume
