@@ -1,15 +1,20 @@
 [global]
 width = 450
-height = 300
 notification_limit = 8
 indicate_hidden = true
 sort = true
+mouse_right_click = do_action
+moue_middle_click = none
 
 origin = top-right
-offset = 12x22
-corner_radius = 2
+offset = (4, 4)
+corner_radius = 3
 
 progress_bar = true
+progress_bar_min_width = 440
+progress_bar_max_width = 440
+progress_bar_frame_width = 0
+progress_bar_corner_radius = 2
 
 padding = 8
 horizontal_padding = 8
@@ -19,17 +24,11 @@ gap_size = 8
 
 font = "monospace 12"
 
-[urgency_low]
+[global]
 foreground = "#1e1e2e"
-background = "#dddddd"
-frame_color = "#1e1e2e"
-highlight = "#bbbbbb"
-
-[urgency_normal]
-foreground = "#1e1e2e"
-background = "#dddddd"
-frame_color = "#1e1e2e"
-highlight = "#bbbbbb"
+background = "#dcdcdc"
+frame_color = "#696969"
+highlight = "#bc0000, #8700bc"
 
 [urgency_critical]
 background = "#900000"

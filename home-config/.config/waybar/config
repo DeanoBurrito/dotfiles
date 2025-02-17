@@ -1,5 +1,6 @@
 {
     "layer": "top",
+    "reload_style_on_change": true,
     "position": "top",
     "height": 30,
     "spacing": 4,
@@ -7,44 +8,27 @@
         "hyprland/workspaces"
     ],
     "modules-right": [
-        "systemd-failed-units",
-        "privacy",
         "network",
         "bluetooth",
-        "cpu",
-        "memory",
+        "wireplumber",
         "backlight",
         "battery",
-        "wireplumber",
-        "clock"
+        "clock",
     ],
     "network": {
         "interval": 2,
-        "format-disconnected": "no-conn 󰲜",
-        "format-ethernet": "{bandwidthUpBits} 󰕒 {bandwidthDownBits} 󰇚 ",
-        "format-wifi": "{bandwidthUpBits} 󰕒 {bandwidthDownBits} 󰇚 󰀂",
-        "format-linked": "{bandwidthUpBits} 󰕒 {bandwidthDownBits} 󰇚 󰛵",
-        "tooltip-format": "if: {ifname}, ip: {ipaddr}, essid: {essid}, dBm: {signaldBm}"
+        "format-disconnected": "󰲜",
+        "format-ethernet": "",
+        "format-wifi": "󰀂",
+        "format-linked": "󰛵",
+        "tooltip-format": "if: {ifname} \nip: {ipaddr} \nessid: {essid} \ndBm: {signaldBm}"
     },
     "bluetooth": {
-        "format-off": "{status} 󰂲",
-        "format-disabled": "{status} 󰂲",
-        "format-on": "{status} 󰂯",
-        "format-connected": "{device_alias} 󰂱",
-        "format-connected-battery": "{device_alias} ({device_battery_percentage}%) 󰂱"
-    },
-    "cpu": {
-        "interval": 2,
-        "states" : {
-            "moderate": 70,
-            "high": 85,
-        },
-        "format": "{usage}% {avg_frequency}GHz"
-    },
-    "memory": {
-        "interval": 2,
-        "format": "{percentage}% ",
-        "tooltip-format": "Memory: {used:0.1f}/{total:0.1f}GiB\nSwap: {swapUsed:0.1f}/{swapTotal:0.1f}GiB",
+        "format-off": "󰂲",
+        "format-disabled": "󰂲",
+        "format-on": "󰂯",
+        "format-connected": "󰂱",
+        "format-connected-battery": "{device_battery_percentage}% 󰂱"
     },
     "backlight": {
         "format": "{percent}% 󰱌"
@@ -52,10 +36,11 @@
     "battery": {
         "interval": 10,
         "states": {
-            "warning": 20,
-            "critical": 10
+            "warning": 15,
+            "critical": 7
         },
         "format": "{capacity}% 󰁹",
+        "format-charging": "{capacity}% 󰂄",
         "format-critical-discharging": "{capacity}% 󰂃",
         "format-warning-discharging": "{capacity}% 󱃍"
     },
@@ -63,6 +48,16 @@
         "format": "{volume}% "
      },
     "clock": {
-        "format": "{:%I:%M %p}"
+        "format": "{:%I:%M %p}",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calender": {
+            "format" : {
+            "today": "<span color='#fafbfc'><b>{}</b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "shift_down",
+            "on-click": "shift_up"
+        }
     }
 }

@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 
-#TODO: hyprcursor, hardware graphics accel test
+#TODO: hyprcursor, hardware graphics accel
 #TODO: collisions between clang tools and gcc default tools
 let
     custom_texlive = (pkgs.texlive.combine {
@@ -34,6 +34,9 @@ in
     };
 
     nix = {
+    	settings.allowed-users = [
+	    "@wheel"
+	];
         settings.auto-optimise-store = true;
         settings.experimental-features = [
             "nix-command"
@@ -55,11 +58,20 @@ in
 
     networking = {
         networkmanager.enable = true;
+	networkmanager.dns = "none";
+
         useDHCP = lib.mkDefault true;
         firewall.enable = true;
         firewall.allowedTCPPorts = [
-            5900 # RFB, for VNC access
-        ];
+            5900 # RFB, for VNC access 
+	];
+
+	nameservers = [
+	    "1.1.1.1"
+	    "9.9.9.9"
+	    "1.0.0.1"
+	    "8.8.8.8"
+	];
     };
 
     powerManagement = {
@@ -80,6 +92,17 @@ in
         dbus.enable = true;
 	hypridle.enable = true;
 
+	avahi = {
+	    enable = true;
+	    nssmdns4 = true;
+	    nssmdns6 = true;
+	    publish = {
+	    	enable = true;
+		addresses = true;
+		workstation = true;
+	    };
+	};
+
         pipewire = {
             enable = true;
             alsa.enable = true;
@@ -91,10 +114,15 @@ in
             enable = true;
             ports = [ 4444 ];
             banner = (builtins.readFile /etc/issue);
+	    extraConfig = ''
+	    Match User dean
+	    	ForceCommand systemd-inhibit --who=dean --why=active_ssh_session --what=idle --mode=block fish
+	    '';
         };
 
         greetd = {
             enable = true;
+	    vt = 2;
             settings = {
                 default_session.user = "greeter";
                 default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd Hyprland --issue";
@@ -162,6 +190,7 @@ in
             NIXOS_XDG_OPEN_USE_PORTAL = "1";
             MOZ_ENABLE_WAYLAND = "1";
             BROWSER = "firefox";
+	    MANPAGER = "nvim +Man!";
         };
 
         etc."greetd/environments".text = "Hyprland";
@@ -175,7 +204,6 @@ in
             man-pages-posix
 
             # Useful admin tools
-            neovim
             git
             curl
             wget
@@ -185,7 +213,6 @@ in
             ntfs3g
 
             # Desktop
-            dunst
             wl-clipboard
             xdg-utils
             wayvnc
@@ -193,14 +220,21 @@ in
     };
 
     programs = {
+    	nix-ld.enable = true;
         hyprland.enable = true;
         hyprlock.enable = true;
 	waybar.enable = true;
+	ssh.startAgent = true;
 
         fish = {
             enable = true;
             shellInit = "fish_vi_key_bindings \n set fish_greeting";
         };
+
+	neovim = {
+	    enable = true;
+	    defaultEditor = true;
+    	};
     };
 
     users.users.dean = {
@@ -213,12 +247,13 @@ in
 
         packages = with pkgs; [
             # background workings
-            hyprpolkitagent
-            hyprpaper
+	    dunst
+	    hyprpolkitagent
+	    hyprpaper
             custom_texlive
             libnotify
             rofi-wayland
-            rofimoji
+	    rofimoji
             grim
             slurp
             killall
@@ -229,30 +264,34 @@ in
             gnumake
             gdb
             gcc
-            pkgsCross.x86_64-embedded.buildPackages.gcc
-            pkgsCross.riscv64-embedded.buildPackages.gcc
-            pkgsCross.m68k.buildPackages.gcc
-            pkgsCross.aarch64-embedded.buildPackages.gcc
+	    pkgsCross.x86_64-embedded.buildPackages.gcc
+	    pkgsCross.riscv64-embedded.buildPackages.gcc
+	    pkgsCross.m68k.buildPackages.gcc
+	    pkgsCross.aarch64-embedded.buildPackages.gcc
             llvmPackages.clangNoLibcxx
             llvmPackages.bintools
             llvmPackages.clang-tools
             llvmPackages.libllvm
 
             # utils
-            bat
-            delta
+	    delta
             btop
             ripgrep
             tokei
             xorriso
+	    transmission_4
+	    fw-ectool
+	    ffmpegthumbnailer
+	    ffmpeg
 
             # graphical programs
-            mpv
+	    mpv
             qemu
             firefox
             kitty
             gparted
             discord
+	    element-desktop
             spotify
             zathura
             vscode

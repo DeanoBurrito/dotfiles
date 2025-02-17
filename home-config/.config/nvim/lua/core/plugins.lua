@@ -18,7 +18,10 @@ return require('packer').startup(function(use)
     -- User Plugins
     use 'nvim-tree/nvim-tree.lua'
     use 'nvim-tree/nvim-web-devicons'
-    use 'nvim-treesitter/nvim-treesitter'
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        run = ":TSUpdate"
+    }
 
     use {
         'nvim-telescope/telescope.nvim',
@@ -40,9 +43,14 @@ return require('packer').startup(function(use)
     }
     use 'lewis6991/gitsigns.nvim'
     use 'romgrk/barbar.nvim'
-    use 'shatur/neovim-ayu'
     use 'nvim-lualine/lualine.nvim'
     use 'folke/trouble.nvim'
+
+    use 'zaldih/themery.nvim'
+    use 'shatur/neovim-ayu'
+    use 'slugbyte/lackluster.nvim'
+    use 'EdenEast/nightfox.nvim'
+    use 'daschw/leaf.nvim'
 
     -- Put this at the end after all plugins
     if packer_bootstrap then

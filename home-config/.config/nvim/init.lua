@@ -19,5 +19,4 @@ vim.opt.colorcolumn = { 80,100 }
 
 require("core.keymaps")
 require("core.plugins")
-require("core.theme")
 require("core.pluginconfig")

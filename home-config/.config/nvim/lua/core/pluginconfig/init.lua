@@ -1,3 +1,4 @@
+require("core.pluginconfig.themery")
 require("core.pluginconfig.nvim-tree")
 require("core.pluginconfig.telescope")
 require("core.pluginconfig.treesitter")
