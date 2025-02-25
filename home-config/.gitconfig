@@ -3,6 +3,11 @@
 [user]
 	name = dean
 	email = dean243@hotmail.com
+    signingKey = ~/.ssh/id_ed25519.pub
+[commit]
+    gpgsign = true
+[tag]
+    gpgsign = true
 [color]
 	ui = auto
 [advice]
@@ -19,3 +24,9 @@
     navigate = true
     dark = true
     line-numbers = true
+[gpg]
+    format = ssh
+[format]
+    signoff = true
+[gpg "ssh"]
+	allowedSignersFile = /home/dean/.ssh/allowed_signers
